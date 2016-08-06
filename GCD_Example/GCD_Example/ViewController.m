@@ -145,7 +145,7 @@ static NSString *const reUse = @"reUse";
 #pragma mark -
 #pragma mark - IBAction methods
 - (IBAction)addPhotoAction:(id)sender {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"get photos from" delegate:self cancelButtonTitle:@"cancel" destructiveButtonTitle:nil otherButtonTitles:@"相册", @"网络下载", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"get photos from" delegate:self cancelButtonTitle:@"cancel" destructiveButtonTitle:nil otherButtonTitles:@"相册", @"网络下载", @"dispatch_semaphore", @"dispatch_source", nil];
     [actionSheet showInView:self.view];
 }
 
@@ -167,6 +167,41 @@ static NSString *const reUse = @"reUse";
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"下载完成" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alertView show];
         }];
+    } else if (buttonIndex == 2) { // dispatch_semaphore测试
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        NSURL *URL = [NSURL URLWithString:kFirstImageURL];
+        __unused Photo *photo = [[Photo alloc] initWithURL:URL withCompletionBlock:^(UIImage *image, NSError *error) {
+            if (error) {
+                NSLog(@"error : %@", error.localizedDescription);
+            }
+            dispatch_semaphore_signal(semaphore);
+            NSLog(@"image : %@", image);
+        }];
+        dispatch_time_t timeout_time = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC));
+        // dispatch_semaphore_wait 返回值为0成功，非0超时
+        long semaphore_value = dispatch_semaphore_wait(semaphore, timeout_time);
+        if (semaphore_value) {
+            NSLog(@"time out ... URL: %@", URL.absoluteString);
+        }
+    } else if (buttonIndex == 3) {
+        
+        __block NSInteger timeOutCount = 10;
+        // 时间间隔
+        uint64_t interval_seconds = 1;
+        dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, interval_seconds * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+        // 设置回调
+        dispatch_source_set_event_handler(timer, ^{
+            NSLog(@"time count : %zd", timeOutCount);
+            if (timeOutCount == 0) {
+                // 取消timer
+                dispatch_source_cancel(timer);
+            }
+            timeOutCount --;
+        });
+        // 启动timer
+        dispatch_resume(timer);
+
     }
 }
 

@@ -66,7 +66,6 @@
     });
 }
 
-
 - (void)downloadPhotosWithBlock:(BatchPhotoDownloadBlock)block {
     __block NSError *_error;
     dispatch_group_t download_group = dispatch_group_create();
