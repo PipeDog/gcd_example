@@ -232,3 +232,4 @@ dispatch_source_set_event_handler(timer, ^{
 dispatch_resume(timer);
 ```
 
+最后给大家推荐一篇gcd详解的文章:[https://github.com/ming1016/study/wiki/%E7%BB%86%E8%AF%B4GCD%EF%BC%88Grand-Central-Dispatch%EF%BC%89%E5%A6%82%E4%BD%95%E7%94%A8](https://github.com/ming1016/study/wiki/%E7%BB%86%E8%AF%B4GCD%EF%BC%88Grand-Central-Dispatch%EF%BC%89%E5%A6%82%E4%BD%95%E7%94%A8)
