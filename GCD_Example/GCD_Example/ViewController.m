@@ -27,13 +27,6 @@ static NSString *const reUse = @"reUse";
 
 @implementation ViewController
 
-/*
- gcd 深入理解1:
- http://www.cocoachina.com/industry/20140428/8248.html
- gcd 深入理解2:
- http://www.cocoachina.com/industry/20140515/8433.html
- */
-
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
